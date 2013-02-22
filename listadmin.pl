@@ -375,8 +375,8 @@ _end_
 	    $match = "reason"
 		    if $dis_reas && got_match ($reason, $dis_reas);
 	    $ans ||= "d" if $match;
-	    $ans = undef if (($ns_subj && $subject =~ $ns_subj) ||
-			     ($ns_from && $from =~ $ns_from) ||
+	    $ans = undef if (($ns_subj && got_match($subject, $ns_subj)) ||
+			     ($ns_from && got_match($from, $ns_from)) ||
 			     $dont_skip_forward);
 
 	    if ($ans && $match) {
@@ -2006,15 +2006,23 @@ sub submit_http {
 }
 
 sub got_match {
-    my ($str, $pattern) = @_;
+    my ($str, $patterns) = @_;
 
-    return undef unless defined ($str) && $pattern;
+    return undef unless defined ($str) && $patterns;
 
-    # If the pattern is delimited by slashes, run it directly ...
-    if ($pattern =~ m,^/(.*)/([ix]*)$,) {
-	eval "\$str =~ $pattern";
-    } else {
-	$str =~ $pattern;
+    foreach my $pattern (@$patterns) {
+        my $match = 0;
+
+        # If the pattern is delimited by slashes, run it directly ...
+        if ($pattern =~ m,^/(.*)/([ix]*)$,) {
+            eval "\$match = \$str =~ $pattern";
+        } else {
+            $match = $str =~ $pattern;
+        }
+
+        if ($match) {
+            return $match
+        }
     }
 }
 
