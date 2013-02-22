@@ -1396,7 +1396,7 @@ sub set_param_values {
 sub read_config {
     my ($file) = @_;
 
-    my %cur = map { $_ => undef; }
+    my %cur = map { $_ => []; }
 	    qw (not_spam_if_from
 		not_spam_if_subject
 		discard_if_from
@@ -1499,7 +1499,7 @@ sub read_config {
 		$val =~ s/\\"/"/g;
 		$val =~ s/\\\\/\\/g;
 	    }
-	    $cur{$key} = ($val eq "NONE") ? undef : $val;
+	    push($cur{$key}, ($val eq "NONE") ? undef : $val);
 	} elsif ($line =~ /^spamheader\s+/) {
 	    $cur{spamheader} = unquote($POSTMATCH);
 	    unless ($cur{spamheader} =~ /^[\w-]+$/) {
