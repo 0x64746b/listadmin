@@ -2021,6 +2021,7 @@ sub got_match {
         }
 
         if ($match) {
+            print "$str matches $pattern\n";
             return $match
         }
     }
